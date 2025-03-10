@@ -1,20 +1,12 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { AuthRepository } from "../data_access/auth_repository";
+import { createUser, findUserByEmail, findUserByUserName, verifyPassword } from "../data_access/auth_repository";
 import { IUser } from "../models/user";
 
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET as string;
-
-export class AuthService {
-  private repo: AuthRepository;
-
-  constructor(repo: AuthRepository) {
-    this.repo = repo;
-  }
-
   // Register a new user
-  async registerUser(userData: {
+  export async function registerUser(userData: {
     first_name: string;
     last_name: string;
     email: string;
@@ -26,7 +18,7 @@ export class AuthService {
     token: string;
   }> {
     // Check if username already exists
-    const existingUsername = await this.repo.findUserByUserName(
+    const existingUsername = await findUserByUserName(
       userData.user_name
     );
     if (existingUsername) {
@@ -34,16 +26,16 @@ export class AuthService {
     }
 
     // Check if email already exists
-    const existingEmail = await this.repo.findUserByEmail(userData.email);
+    const existingEmail = await findUserByEmail(userData.email);
     if (existingEmail) {
       throw new Error("Email already registered");
     }
 
     // Create new user
-    const newUser = await this.repo.createUser(userData);
+    const newUser = await createUser(userData);
 
     // Generate token
-    const token = this.generateToken(newUser);
+    const token = generateToken(newUser);
 
     return {
       user: newUser,
@@ -52,7 +44,7 @@ export class AuthService {
   }
 
   // Login user
-  async loginUser(credentials: {
+  export async function loginUser(credentials: {
     user_name: string;
     password: string;
   }): Promise<{
@@ -60,13 +52,13 @@ export class AuthService {
     token: string;
   }> {
     // Find user by username
-    const user = await this.repo.findUserByUserName(credentials.user_name);
+    const user = await findUserByUserName(credentials.user_name);
     if (!user) {
       throw new Error("Invalid username or password");
     }
 
     // Verify password
-    const isPasswordValid = await this.repo.verifyPassword(
+    const isPasswordValid = await verifyPassword(
       user,
       credentials.password
     );
@@ -75,7 +67,7 @@ export class AuthService {
     }
 
     // Generate token
-    const token = this.generateToken(user);
+    const token = generateToken(user);
 
     return {
       user,
@@ -84,7 +76,7 @@ export class AuthService {
   }
 
   // Helper method to generate JWT token
-  private generateToken(user: IUser): string {
+  export function  generateToken(user: IUser): string {
     return jwt.sign(
       {
         id: user._id,
@@ -95,7 +87,4 @@ export class AuthService {
       { expiresIn: "30m" }
     );
   }
-}
 
-const repository = new AuthRepository();
-export const auth_service = new AuthService(repository);

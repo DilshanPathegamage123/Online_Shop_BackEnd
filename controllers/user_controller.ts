@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { user_service } from "../Services/user_service";
+import { findAllUsersSer } from "../Services/user_service";
+import { findUserById } from "../data_access/user_repository";
 
 //Get all users
 export const getAllUsers = async (
@@ -7,7 +8,7 @@ export const getAllUsers = async (
   res: Response
 ): Promise<void> => {
   try {
-    const users = await user_service.findAllUsers();
+    const users = await findAllUsersSer();
     res.status(200).json(users);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -20,7 +21,7 @@ export const getUserById = async (
   res: Response
 ): Promise<void> => {
   try {
-    const singleUser = await user_service.findUserById(req.params.id);
+    const singleUser = await findUserById(req.params.id);
     res.status(200).json(singleUser);
   } catch (error: any) {
     res.status(500).json({ message: error.messsage });

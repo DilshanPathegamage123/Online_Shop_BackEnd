@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { auth_service } from "../Services/auth_service";
+import { loginUser, registerUser } from "../Services/auth_service";
 
 // Register user
 export const register = async (req: Request, res: Response): Promise<void> => {
@@ -7,7 +7,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const { first_name, last_name, email, user_name, password, role } =
       req.body;
 
-    const result = await auth_service.registerUser({
+    const result = await registerUser({
       first_name,
       last_name,
       email,
@@ -43,12 +43,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 };
 
 // Login user
-// Login user
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { user_name, password } = req.body;
 
-    const result = await auth_service.loginUser({
+    const result = await loginUser({
       user_name,
       password,
     });

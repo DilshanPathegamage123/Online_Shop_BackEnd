@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { product_service } from "../Services/product_service";
+import { getAllProductsSer, getProductByIdSer , createProductSer, deleteProductSer, updateProductSer } from "../Services/product_service";
 
 //Get All Products
 export const getAllProducts = async (
@@ -7,7 +7,7 @@ export const getAllProducts = async (
   res: Response
 ): Promise<void> => {
   try {
-    const products = await product_service.getAllProducts();
+    const products = await getAllProductsSer();
     res.status(200).json(products);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -20,7 +20,7 @@ export const getProductById = async (
   res: Response
 ): Promise<void> => {
   try {
-    const singleProduct = await product_service.getProductById(req.params.id);
+    const singleProduct = await getProductByIdSer(req.params.id);
     res.status(200).json(singleProduct);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -33,7 +33,7 @@ export const createProduct = async (
   res: Response
 ): Promise<void> => {
   try {
-    const newProduct = await product_service.createProduct(req.body);
+    const newProduct = await createProductSer(req.body);
     res.status(201).json(newProduct);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -46,7 +46,7 @@ export const deleteProduct = async (
   res: Response
 ): Promise<void> => {
   try {
-    const deleteProduct = await product_service.deleteProduct(req.params.id);
+    const deleteProduct = await deleteProductSer(req.params.id);
     res.status(200).json(deleteProduct);
   } catch (error: any) {
     if (error.message.includes("not found")) {
@@ -63,7 +63,7 @@ export const updateProduct = async (
   res: Response
 ): Promise<void> => {
   try {
-    const updateProduct = await product_service.updateProduct(
+    const updateProduct = await updateProductSer(
       req.params.id,
       req.body,
      

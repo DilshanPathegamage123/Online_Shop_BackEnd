@@ -1,26 +1,19 @@
-import { UserRepository } from "../data_access/user_repository";
+import { findAllUsers, findUserById } from "../data_access/user_repository";
 import { IUser } from "../models/user";
 
-export class UserService {
-  private repo: UserRepository;
-
-  constructor(repo: UserRepository) {
-    this.repo = repo;
-  }
-
   //Get all users
-  async findAllUsers(): Promise<IUser[]> {
+  export async function findAllUsersSer(): Promise<IUser[]> {
     try {
-      return await this.repo.findAllUsers();
+      return await findAllUsers();
     } catch (error: any) {
       throw new Error(`Error fetching users: ${error}`);
     }
   }
 
   //Get single user by id
-  async findUserById(id: string): Promise<IUser | null> {
+ export async function findUserByIdSer(id: string): Promise<IUser | null> {
     try {
-      const user = await this.repo.findUserById(id);
+      const user = await findUserById(id);
       if (!user) {
         throw new Error(`User with ID ${id} not found`);
       }
@@ -29,7 +22,6 @@ export class UserService {
       throw new Error(`Error fetching user by id: ${error}`);
     }
   }
-}
 
-const repository = new UserRepository();
-export const user_service = new UserService(repository);
+
+
